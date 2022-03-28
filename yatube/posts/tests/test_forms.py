@@ -104,10 +104,9 @@ class PostCreateFormTests(TestCase):
         """Комментарий появляется на странице поста"""
         form = CommentForm(data={'text': 'test comment'})
         self.assertTrue(form.is_valid())
+        url = reverse('posts:add_comment', kwargs={'post_id': self.post.id})
         response = self.authorized_client.post(
-            reverse(
-                'posts:add_comment', kwargs={'post_id': self.post.id}
-                ), data=form.data, follow=True)
+            url, data=form.data, follow=True)
         self.assertEqual(self.post.comments.last().text, form.data['text'])
         self.assertRedirects(
             response, reverse(
