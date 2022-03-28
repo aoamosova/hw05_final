@@ -108,7 +108,7 @@ class PostCreateFormTests(TestCase):
         response = self.authorized_client.post(
             reverse(
                 'posts:add_comment', kwargs={'post_id': self.post.id}
-                ), data=form.data, follow=True)
+                    ), data=form.data, follow=True)
         self.assertEqual(self.post.comments.last().text, form.data['text'])
         self.assertRedirects(
             response, reverse(
