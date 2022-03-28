@@ -45,7 +45,6 @@ class PostCreateFormTests(TestCase):
 
     def setUp(self):
         self.guest_client = Client()
-        self.user = User.objects.get(username='auth')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
@@ -68,7 +67,7 @@ class PostCreateFormTests(TestCase):
             follow=True
         )
         self.assertRedirects(
-            response, reverse('posts:profile', kwargs={'username': 'auth'}))
+            response, reverse('posts:profile', kwargs={'username': self.user}))
         self.assertEqual(Post.objects.count(), posts_count + 1)
         self.assertTrue(
             Post.objects.filter(
@@ -105,9 +104,10 @@ class PostCreateFormTests(TestCase):
         """Комментарий появляется на странице поста"""
         form = CommentForm(data={'text': 'test comment'})
         self.assertTrue(form.is_valid())
-        url = reverse('posts:add_comment', kwargs={'post_id': self.post.id})
         response = self.authorized_client.post(
-            url, data=form.data, follow=True)
+            reverse(
+                'posts:add_comment', kwargs={'post_id': self.post.id}
+                ), data=form.data, follow=True)
         self.assertEqual(self.post.comments.last().text, form.data['text'])
         self.assertRedirects(
             response, reverse(

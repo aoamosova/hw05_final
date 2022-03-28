@@ -1,9 +1,8 @@
 from http import HTTPStatus
 
-from django.core.cache import cache
 from django.test import Client, TestCase
 from django.urls import reverse
-
+from django.core.cache import cache
 from ..models import Group, Post, User
 
 
@@ -11,6 +10,7 @@ class PostsURLTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.user = User.objects.create_user(username='first_test_name')
         cls.group = Group.objects.create(
             title='Тестовая группа',
             slug='the_group',
@@ -28,12 +28,10 @@ class PostsURLTests(TestCase):
 
     def setUp(self):
         self.guest_client = Client()
-        self.first_user = User.objects.create_user(username='first_test_name')
         self.authorized_client = Client()
-        self.authorized_client.force_login(self.first_user)
-        self.second_user = self.post.author
+        self.authorized_client.force_login(self.user)
         self.authorized_client_author = Client()
-        self.authorized_client_author.force_login(self.second_user)
+        self.authorized_client_author.force_login(self.post.author)
 
     def test_pages_urls_for_guest_users(self):
         """Тест доступности страниц guest пользователям."""
@@ -98,7 +96,7 @@ class PostsURLTests(TestCase):
         templates_url_names = {
             '/': 'posts/index.html',
             f'/group/{self.group.slug}/': 'posts/group_list.html',
-            f'/profile/{self.second_user}/': 'posts/profile.html',
+            f'/profile/{self.post.author}/': 'posts/profile.html',
             f'/posts/{self.post.id}/': 'posts/post_detail.html',
             f'/posts/{self.post.id}/edit/': 'posts/create_post.html',
             '/create/': 'posts/create_post.html',
