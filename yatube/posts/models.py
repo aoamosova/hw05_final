@@ -67,7 +67,7 @@ class Comment(models.Model):
         related_name='comments'
     )
     text = models.TextField('Комментарий')
-    created = models.DateTimeField('Дата комментария', default=timezone.now)
+    created = models.DateTimeField('Дата комментария', auto_now_add=True)
 
 
 class Follow(models.Model):
