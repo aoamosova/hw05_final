@@ -18,18 +18,21 @@ except ImportError:
 
 
 def search_field(model_fields, searching_field_name):
-    for field in model_fields:
-        if field.name == searching_field_name:
-            return field
-    return None
+    return next(
+        (
+            field
+            for field in model_fields
+            if field.name == searching_field_name
+        ),
+        None,
+    )
 
 
 def search_refind(execution, user_code):
     """Поиск запуска"""
-    for temp_line in user_code.split('\n'):
-        if re.search(execution, temp_line):
-            return True
-    return False
+    return any(
+        re.search(execution, temp_line) for temp_line in user_code.split('\n')
+    )
 
 
 class TestFollow:

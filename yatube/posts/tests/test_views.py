@@ -44,11 +44,12 @@ class PostsPagesTests(TestCase):
         )
         for i in range(13):
             cls.posts = Post.objects.create(
-                text='Тестовый пост' + str(i),
+                text=f'Тестовый пост{str(i)}',
                 author=cls.user,
                 group=cls.group,
                 image=uploaded,
             )
+
         cls.post_with_group = Post.objects.create(
             text='Тестовый пост',
             author=cls.user,
@@ -158,7 +159,7 @@ class PostsPagesTests(TestCase):
         """Паджинатор работает правильно на странице 2"""
         for address in PostsPagesTests.urls:
             with self.subTest(address=address):
-                response = self.authorized_client.get(address + '?page=2')
+                response = self.authorized_client.get(f'{address}?page=2')
                 self.assertGreaterEqual(
                     len(response.context['page_obj']), 3, 4)
 
